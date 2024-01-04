@@ -1,14 +1,13 @@
 import base64
 import json
+import logging
 import os
 import shutil
 import time
-import logging
 from datetime import datetime
 
 import requests
 from bypy import ByPy
-
 
 # 设置日志
 logging.basicConfig(filename='backup_by_BaiDuYun.log', level=logging.INFO)
@@ -90,6 +89,13 @@ def backup_redis(backup_path):
     shutil.copytree("/data/redis", dst_path, ignore=ignore_sock_files)
 
 
+def backup_all_data(backup_path):
+    dst_path = backup_path
+    if os.path.exists(dst_path):
+        shutil.rmtree(dst_path)
+    shutil.copytree("/data", dst_path, ignore=ignore_sock_files)
+
+
 def zip_and_upload(directory):
     # 打包并上传到百度云
     shutil.make_archive(directory, 'zip', directory)
@@ -112,9 +118,8 @@ if __name__ == '__main__':
         os.makedirs(f"{date_folder}/halo/{prefix}", exist_ok=True)
         backup_blog(prefix, port, user, password, f"{date_folder}/halo/{prefix}")
 
-    # 备份MySQL和Redis
-    backup_mysql(date_folder)
-    backup_redis(date_folder)
+    # 备份所有数据
+    backup_all_data(date_folder)
 
     # 打包并上传所有备份
     zip_and_upload(date_folder)
