@@ -2,3 +2,7 @@
 .idea
 *.log
 .env
+gzip.zip
+*.jpg
+*.jepg
+*.png

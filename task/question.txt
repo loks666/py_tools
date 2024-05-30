@@ -1,0 +1,246 @@
+Like many small robotic devices, the Vacuuminator represents the world around it as a grid ofsmall squares. In Python, this grid can be represented as a list of lists. Every position in the listof lists is represented by a string containing a single upper case character as follows.
+"x':The location of the Vacuuminator.
+'D':Contains dirt that the Vacuuminator should clean.
+'w':A wall that the Vacuuminator cannot pass through.
+'E': An empty square that the Vacuuminator can pass through but does not need to clean.
+For example, the world below could be represented as
+world = [
+    ['D', 'E', 'D', 'E'],
+    ['E', 'W', 'W', 'W'],
+    ['D', 'W', 'E', 'E'],
+    ['E', 'D', 'E', 'X']
+]
+Task 2: Making a Move (3 marks)
+We now need to allow the Vacuuminator to move around the world.Write a function make_move(world, direction).The directionmay be one of 'u','d','l',or 'r'as described on the Backgroundslide. Your function return a list of lists representing the world afterthe move has been made.
+Note that a move may not be possible either because:
+lt would take the Vacuuminator off the edge of the worldlt would take the Vacuuminator into a wall
+If an impossible move is requested, the Vacuuminator should notattempt to make it and should instead return the current state ofthe world.
+Example Calls
+>>> make_move([['E', 'W'], ['E', 'X']], 'l')
+[['E', 'W'], ['X', 'E']]
+>>> make_move([['E', 'W'], ['E', 'X']], 'r')
+[['E', 'W'], ['E', 'X']]
+>>> make_move([['E', 'W'], ['E', 'X']], 'u')
+[['E', 'W'], ['E', 'X']]
+
+Note that world[e] [e] therefore corresponds to the position in the top-left corner of the world.A 4 x 4 world is shown, but the Vacuuminator can handle worlds of different sizes. Note that theworld will always be rectanaular i.e, there will never be rows of different length in the world).
+The Vacuuminator can move up, down, left and right within the world. Each move can berepresented by a single character:
+'u' for an upwards move, towards the Oth row of the world.
+'d' for a downwards move, away from the 0th row of the world.
+'l'for a left move, towards the 0th column of the world.
+'r'for a right move, away from the 0th column of the world.
+
+lf the Vacuuminator moves into a square containing dirt, it will clean the dirt, leaving the squareempty once the Vacuuminator moves on.
+Throughout this assignment you should assume there is only ever one Vacuuminator operatingin the world.
+
+Task 3: Finding Dirt (4 marks)
+In the previous questions we assumed the Vacuuminator had aperfect knowledge of the world around it. In practice, mobilerobots need to rely on sensors to find out information about theworld.In this question we assume that the Vacuuminator hasexactly four sensors:
+
+A 'left sensor' which will identify the nearest dirty squareimmediately to the left of the Vacuuminator (i.e. in thesame row with a lower index position).
+
+A 'right sensor' which will identify the nearest dirty squareimmediately to the right of the Vacuuminator (i.e. in thesame row with a higher index position).
+
+An 'up sensor' which will identify the nearest dirty squareimmediately above the Vacuuminator (i.e. in the samecolumn with a lower index position).
+
+A 'down sensor' which will identify the nearest dirty squareimmediately below the Vacuuminator (i.e. in the samecolumn with a higher index position).
+
+The Vacuuminator's sensors are unable to penetrate walls, i.e.dirt on the opposite side of a wall will not be detected. TheVaccuminator is also unable to identify dirt that its sensors can'tsee (e.g. dirt that is diagonal to its current position)
+Write a function path _to_next(world) that will identify thenearest piece of dirt that will be detected using theVacuuminator's sensors. Your function should return a listcontaining the moves required for the Vacuuminator to reach thatpiece of dirt from its current position.
+In the event that there are multiple pieces of dirt that are at anequal distance from the Vacuuminator, they should be prioritisedin the following order:
+
+Highest Priority: Dirt above the Vacuuminator
+Second Priority: Dirt to the right of the Vacuuminator
+Third Priority: Dirt below the Vacuuminator
+Lowest Priority: Dirt to the left of the Vacuuminator
+
+The Vaccumunator stays at its position when scanning, thengoes straight to the nearest target dirt (which is directly at up.right, down or left directions from the vaccumator's currentposition, and the target maybe one or more unit distances furtheraway).
+If no dirt can be detected, your function should return an emptylist.
+Example Calls
+
+>>> print(path_to_next([['E', 'D'], ['E', 'X']]))
+['u']
+
+>>> print(path_to_next([['E', 'D'], ['E', 'E'], ['E', 'X']]))
+['u', 'u']
+
+>>> print(path_to_next([['D', 'E'], ['E', 'X']]))
+[]
+
+Task 4: Cleaning all the dirt located (5 marks)
+We now wish to produce a sequence of moves to clean all of thedirt the Vacuuminator can find, and then return the Vacuuminatorto its starting position.The Vacuuminator should repeatedly scanfor and clean up dirt found from its current position according tothe rules in Task 3. lt should continue to do so as long as it findsnew dirt from its current position. We will call this a cleaningcycle.
+Once the Vacuuminator is no longer able to find any new dirt, itshould backtrack along its path, scanning for new dirt at eachsquare. lf it finds any new dirt in its scan it should begin a newcleaning cycle, starting with this dirt.
+The Vacuuminator should continue until it has backtrackedthrough every move it has made and found no more dirt,scanning and cleaning as it goes. Note that once theVacuuminator has selected a patch of dirt to clean, it will notscan for any new dirt until that patch has been cleaned. Scanningfor new dirt will only happen while the Vacuuminator isbacktracking
+Write a function clean_path(world). This function should returna list of moves that the Vacuuminator will use to clean the worldaccording to the rules above.
+A working version of the Task 3 path to next(world)function isprovided to help you with this task.
+
+Example calls
+>>> clean_path([['E', 'D'], ['E', 'E'], ['E', 'X']])
+['u', 'u', 'd', 'd']
+
+>>> clean_path([['D', 'D'], ['E', 'E'], ['E', 'X']])
+['u', 'u', 'l', 'r', 'd', 'd']
+
+>>> clean_path([['E', 'D', 'E'], ['X', 'D', 'D'], ['E', 'E', 'E']])
+['r', 'u', 'd', 'r', 'l', 'l']
+
+>>> clean_path([['E', 'D', 'E'], ['X', 'D', 'E'], ['E', 'D', 'E']])
+['r', 'u', 'd', 'd', 'u', 'u', 'd', 'l']
+
+>>> clean_path([['E', 'D', 'D'], ['D', 'E', 'E'], ['D', 'E', 'X']])
+['u', 'u', 'l', 'r', 'd', 'l', 'l', 'd', 'u', 'r', 'r', 'd']
+
+
+期望输出：
+1
+[['E', 'W'], ['X', 'E']]
+[['E', 'W'], ['E', 'X']]
+[['E', 'W'], ['E', 'X']]
+
+2
+['u']
+['u', 'u']
+[]
+
+3
+['u', 'u', 'd', 'd']
+['u', 'u', 'l', 'r', 'd', 'd']
+['r', 'u', 'd', 'r', 'l', 'l']
+['r', 'u', 'd', 'd', 'u', 'u', 'd', 'l']
+['u', 'u', 'l', 'r', 'd', 'l', 'l', 'd', 'u', 'r', 'r', 'd']
+
+目前代码实现：
+def make_move(world, direction):
+    x, y = find_vacuuminator(world)
+    dx, dy = {'u': (-1, 0), 'd': (1, 0), 'l': (0, -1), 'r': (0, 1)}.get(direction, (0, 0))
+    nx, ny = x + dx, y + dy
+    if 0 <= nx < len(world) and 0 <= ny < len(world[0]) and world[nx][ny] != 'w':
+        if world[nx][ny] == 'D':
+            world[nx][ny] = 'E'
+        world[x][y], world[nx][ny] = world[nx][ny], 'X'
+    return world
+
+
+def find_vacuuminator(world):
+    for i in range(len(world)):
+        for j in range(len(world[i])):
+            if world[i][j] == 'X':
+                return i, j
+    return -1, -1
+
+
+def path_to_next(world):
+    x, y = find_vacuuminator(world)
+    directions = [('u', -1, 0), ('r', 0, 1), ('d', 1, 0), ('l', 0, -1)]
+    best_path = []
+    for direction, dx, dy in directions:
+        nx, ny = x + dx, y + dy
+        while 0 <= nx < len(world) and 0 <= ny < len(world[0]):
+            if world[nx][ny] == 'w':
+                break
+            if world[nx][ny] == 'D':
+                best_path = [direction] * (abs(nx - x) + abs(ny - y))
+                return best_path
+            nx += dx
+            ny += dy
+    return best_path
+
+
+def clean_path(world):
+    path = []
+    start_positions = find_vacuuminator(world)
+    visited = set()  # To keep track of visited positions
+
+    # Clean all visible dirt first
+    while True:
+        next_path = path_to_next(world)
+        if not next_path:
+            break
+        path += next_path
+        for move in next_path:
+            world = make_move(world, move)
+            visited.add((find_vacuuminator(world)))  # Mark the new position as visited
+
+    # Backtracking to start position and scanning for new dirt
+    current_position = find_vacuuminator(world)
+    while current_position != start_positions:
+        # Move towards start position if no new dirt is found
+        move_towards_start = calculate_move_towards_start(current_position, start_positions)
+        world = make_move(world, move_towards_start)
+        path.append(move_towards_start)
+        current_position = find_vacuuminator(world)
+
+    # After backtracking, start a new cleaning cycle if there's any dirt left
+    while True:
+        next_path = path_to_next(world)
+        if not next_path:
+            break
+        path += next_path
+        for move in next_path:
+            world = make_move(world, move)
+            visited.add((find_vacuuminator(world)))  # Mark the new position as visited
+
+    return path
+
+
+def calculate_move_towards_start(current, start):
+    if current[0] > start[0]:
+        return 'u'
+    elif current[0] < start[0]:
+        return 'd'
+    elif current[1] > start[1]:
+        return 'l'
+    elif current[1] < start[1]:
+        return 'r'
+
+
+def calculate_return_path(current, start):
+    path = []
+    # Calculate vertical path
+    if current[0] > start[0]:
+        path.extend(['u'] * (current[0] - start[0]))
+    else:
+        path.extend(['d'] * (start[0] - current[0]))
+    # Calculate horizontal path
+    if current[1] > start[1]:
+        path.extend(['l'] * (current[1] - start[1]))
+    else:
+        path.extend(['r'] * (start[1] - current[1]))
+    return path
+
+
+if __name__ == '__main__':
+    # Task 2: Making a Move
+    print("\nTask 2: Making a Move")
+    print(make_move([['E', 'w'], ['E', 'X']], 'l'))  # Expected: [['E', 'w'], ['X', 'E']]
+    print(make_move([['E', 'w'], ['E', 'X']], 'r'))  # Expected: [['E', 'w'], ['E', 'X']]
+    print(make_move([['E', 'w'], ['E', 'X']], 'u'))  # Expected: [['E', 'w'], ['E', 'X']]
+
+    # Task 3: Path to Next
+    print("\nTask 3: Path to Next")
+    print(path_to_next([['E', 'D'], ['E', 'X']]))  # Expected: ['u']
+    print(path_to_next([['E', 'D'], ['E', 'E'], ['E', 'X']]))  # Expected: ['u', 'u']
+    print(path_to_next([['D', 'E'], ['E', 'X']]))  # Expected: []
+
+    # Task 4: Clean Path
+    print("\nTask 4: Clean Path")
+    print(clean_path([['E', 'D'], ['E', 'E'], ['E', 'X']]))  # Expected: ['u', 'u', 'd', 'd']
+    print(clean_path([['D', 'D'], ['E', 'E'], ['E', 'X']]))  # Expected: ['u', 'u', 'l', 'r', 'd', 'd']
+    print(clean_path([['E', 'D', 'E'], ['X', 'D', 'D'], ['E', 'E', 'E']]))  # Expected: ['r', 'u', 'd', 'r', 'l', 'l']
+    print(clean_path(
+        [['E', 'D', 'E'], ['X', 'D', 'E'], ['E', 'D', 'E']]))  # Expected: ['r', 'u', 'd', 'd', 'u', 'u', 'd', 'l']
+    print(clean_path([['E', 'D', 'D'], ['D', 'E', 'E'],
+                      ['D', 'E', 'X']]))  # Expected: ['u', 'u', 'l', 'r', 'd', 'l', 'l', 'd', 'u', 'r', 'r', 'd']
+
+目前代码输出：
+['u', 'u', 'd', 'd']
+['u', 'u', 'l', 'd', 'd', 'r']
+['r', 'u', 'd', 'l', 'r', 'r']
+['r', 'u', 'd', 'd', 'u', 'l']
+['u', 'u', 'l', 'd', 'd', 'r', 'l', 'l', 'u']
+帮我修改代码的实现让他现在可以输出
+['u', 'u', 'd', 'd']
+['u', 'u', 'l', 'r', 'd', 'd']
+['r', 'u', 'd', 'r', 'l', 'l']
+['r', 'u', 'd', 'd', 'u', 'u', 'd', 'l']
+['u', 'u', 'l', 'r', 'd', 'l', 'l', 'd', 'u', 'r', 'r', 'd']
+
