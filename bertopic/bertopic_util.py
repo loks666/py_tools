@@ -1,8 +1,9 @@
 import pandas as pd
-from bertopic import BERTopic
 from sklearn.metrics import classification_report
 from sqlalchemy import create_engine
 from umap import UMAP
+
+from bertopic import BERTopic
 
 
 # 需要爬https://www.chengde.gov.cn/col/col2918/index.html

@@ -17,7 +17,9 @@ def mwms_s(G, alpha, epsilon, iterations):
         for i in range(n):  # Use integer indices
             neighbors = list(G.neighbors(i))
             if len(neighbors) > 0:
-                weighted_sum = sum(G.motif_matrix[i, j] / (np.sum(G.motif_matrix[i, neighbors]) + 1e-10) * states[j] for j in neighbors)
+                weighted_sum = sum(
+                    G.motif_matrix[i, j] / (np.sum(G.motif_matrix[i, neighbors]) + 1e-10) * states[j] for j in
+                    neighbors)
                 new_states[i] = states[i] + epsilon * (weighted_sum - states[i])
         states = new_states
         all_states.append(states.copy())
@@ -40,7 +42,8 @@ def mwms_j(G, alpha, epsilon, iterations):
         for i in range(n):  # Use integer indices
             neighbors = list(G.neighbors(i))
             if len(neighbors) > 0:
-                weighted_sum = sum((G.motif_matrix[i, j] + 1) / (np.sum(G.motif_matrix[i, neighbors]) + 1) * (states[j] if j != i else states[i]) for j in neighbors)
+                weighted_sum = sum((G.motif_matrix[i, j] + 1) / (np.sum(G.motif_matrix[i, neighbors]) + 1) * (
+                    states[j] if j != i else states[i]) for j in neighbors)
                 new_states[i] = weighted_sum / (np.sum(G.motif_matrix[i, neighbors]) + 1)
         states = new_states
         all_states.append(states.copy())
@@ -78,7 +81,8 @@ def create_gif(all_states, G, filename):
     images = []
     for states in all_states:
         plt.figure(figsize=(6, 6))
-        nx.draw(G, pos={node: G.nodes[node]['pos'] for node in range(len(G.nodes))}, node_color='red', with_labels=True, node_size=50)
+        nx.draw(G, pos={node: G.nodes[node]['pos'] for node in range(len(G.nodes))}, node_color='red', with_labels=True,
+                node_size=50)
         plt.title('Iteration')
         plt.savefig('temp.png')
         plt.close()

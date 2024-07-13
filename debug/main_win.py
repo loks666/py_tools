@@ -1,12 +1,14 @@
-import os
 import ctypes
+import os
 import time
+from ctypes import *
+
 import numpy as np
 from pykalman import KalmanFilter
-from ctypes import *
 
 VCI_USBCAN2 = 4
 STATUS_OK = 1
+
 
 class VCI_INIT_CONFIG(Structure):
     _fields_ = [("AccCode", c_uint),
@@ -16,6 +18,7 @@ class VCI_INIT_CONFIG(Structure):
                 ("Timing0", c_ubyte),
                 ("Timing1", c_ubyte),
                 ("Mode", c_ubyte)]
+
 
 class VCI_CAN_OBJ(Structure):
     _fields_ = [("ID", c_uint),
@@ -28,6 +31,7 @@ class VCI_CAN_OBJ(Structure):
                 ("Data", c_ubyte * 8),
                 ("Reserved", c_ubyte * 3)]
 
+
 class VCI_CAN_OBJ_ARRAY(Structure):
     _fields_ = [('SIZE', c_uint16), ('STRUCT_ARRAY', POINTER(VCI_CAN_OBJ))]
 
@@ -35,6 +39,7 @@ class VCI_CAN_OBJ_ARRAY(Structure):
         self.STRUCT_ARRAY = cast((VCI_CAN_OBJ * num_of_structs)(), POINTER(VCI_CAN_OBJ))
         self.SIZE = num_of_structs
         self.ADDR = self.STRUCT_ARRAY[0]
+
 
 def main_logic(log_signal, is_running):
     dll_path = os.path.join(os.path.dirname(__file__), 'ControlCAN.dll')
@@ -151,7 +156,9 @@ def main_logic(log_signal, is_running):
                             statue = 0
                             break
 
-                        ltr_value = filtered_state_means_pred[-1] if not isinstance(filtered_state_means_pred[-1], np.ndarray) else filtered_state_means_pred[-1][0]
+                        ltr_value = filtered_state_means_pred[-1] if not isinstance(filtered_state_means_pred[-1],
+                                                                                    np.ndarray) else \
+                        filtered_state_means_pred[-1][0]
                         logs_ltr_statue.append([ltr_value, statue, ltime])
                         n += 1
 
