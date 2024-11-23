@@ -35,6 +35,6 @@ def convert_to_ico(input_image_path, output_sizes=None):
 
 if __name__ == "__main__":
     input_image = r'D:\Program\Project\Python\py_tools\tool\ai.png'
-    icon_sizes = 256  # 传入单个整数
+    icon_sizes = 128  # 传入单个整数
     # 调用转换函数
     convert_to_ico(input_image, output_sizes=icon_sizes)
