@@ -98,9 +98,9 @@ def backup_all_data(backup_path):
 
 def zip_and_upload(directory):
     # 打包并上传到百度云
-    shutil.make_archive(directory, 'zip', directory)
+    shutil.make_archive(directory, 'order', directory)
     bp = ByPy()
-    bp.upload(localpath=directory + ".zip", remotepath="/backup/" + directory + ".zip", ondup='overwrite')
+    bp.upload(localpath=directory + ".order", remotepath="/backup/" + directory + ".order", ondup='overwrite')
     # 删除原始文件夹
     shutil.rmtree(directory)
     logging.info(f"{directory} has been deleted after zipping and uploading.")
