@@ -23,15 +23,18 @@ def compute_energy(num_turns, path_length):
     return num_turns / (path_length ** 2)
 
 # 初始化路径
+# 修改为右上角垂直入口，左下角垂直出口
 def initialize_path(n1, n2):
     path = []
     visited = [[False] * n2 for _ in range(n1)]
-    for c in range(n2):
-        path.append((0, c))
-        visited[0][c] = True
-    for r in range(1, n1):
+    # 右上角垂直入口
+    for r in range(n1):
         path.append((r, n2 - 1))
         visited[r][n2 - 1] = True
+    # 底部横向到左下角
+    for c in reversed(range(n2 - 1)):
+        path.append((n1 - 1, c))
+        visited[n1 - 1][c] = True
     num_turns = 1
     return path, visited, num_turns
 
@@ -90,6 +93,10 @@ def path_to_image(path):
                 cc1 - channel_width//2:cc1 + channel_width//2 + 1] = 1
     return img
 
+# 检查路径是否满足垂直进出口要求
+def valid_path(path):
+    return path[0][1] == path[1][1] and path[-1][1] == path[-2][1]
+
 # 主程序
 success_count = 0
 attempt_count = 0
@@ -111,7 +118,7 @@ while success_count < args.max_images:
         visited_matrix[X[0]][X[1]] = True
         visited_matrix[Y[0]][Y[1]] = True
         visited_count += 2
-    if visited_count == n1 * n2:
+    if visited_count == n1 * n2 and valid_path(path):
         img_array = path_to_image(path)
         img = Image.fromarray((img_array * 255).astype('uint8'))
         timestamp = time.strftime("%Y%m%d_%H%M%S")
